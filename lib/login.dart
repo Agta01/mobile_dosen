@@ -1,5 +1,91 @@
+// import 'package:flutter/material.dart';
+// import 'api/api_service.dart';
+// import 'dosen/dosen_home.dart';
+// import 'mahasiswa/mahasiswa_home.dart';
+// import 'admin/admin_home.dart';
+
+// class LoginPage extends StatefulWidget {
+//   const LoginPage({Key? key}) : super(key: key);
+
+//   @override
+//   _LoginPageState createState() => _LoginPageState();
+// }
+
+// class _LoginPageState extends State<LoginPage> {
+//   final ApiService apiService = ApiService();
+//   final TextEditingController usernameController = TextEditingController();
+//   final TextEditingController passwordController = TextEditingController();
+
+// Future<void> handleLogin() async {
+//   try {
+//     int level_id = await apiService.login(
+//       usernameController.text,
+//       passwordController.text,
+//     );
+
+//     if (level_id == 1) {
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => const DosenHome()),
+//       );
+//     } else if (level_id == 2) {
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => MahasiswaHome()),
+//       );
+//     } else if (level_id == 3) {
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => AdminHome()),
+//       );
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("Peran tidak dikenali")),
+//       );
+//     }
+//   } catch (e) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Login gagal: $e")),
+//     );
+//   }
+// }
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Login")),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           children: [
+//             TextField(
+//               controller: usernameController,
+//               decoration: InputDecoration(labelText: "Username"),
+//             ),
+//             TextField(
+//               controller: passwordController,
+//               decoration: InputDecoration(labelText: "Password"),
+//               obscureText: true,
+//             ),
+//             SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: handleLogin,
+//               child: Text("Login"),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'api/api_service.dart';
+import 'dosen/dosen_home.dart';
+import 'mahasiswa/mahasiswa_home.dart';
+import 'admin/admin_home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,21 +97,43 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final String validUsername = "dosen";
-  final String validPassword = "dosen123";
+  final ApiService apiService = ApiService();
 
-  void _login() {
+  Future<void> _login() async {
     String username = _usernameController.text;
     String password = _passwordController.text;
-    if (username == validUsername && password == validPassword) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    } else {
+
+    try {
+      // Attempt to login using the API
+      int level_id = await apiService.login(username, password);
+
+      if (level_id == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DosenHome()),
+        );
+      } else if (level_id == 2) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MahasiswaHome()),
+        );
+      } else if (level_id == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AdminHome()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Peran tidak dikenali"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Username atau password salah'),
+        SnackBar(
+          content: Text("Login gagal: $e"),
           backgroundColor: Colors.red,
         ),
       );

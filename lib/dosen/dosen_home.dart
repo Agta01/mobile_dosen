@@ -3,14 +3,14 @@ import 'tasks.dart';
 import 'notifications.dart';
 import 'settings.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class DosenHome extends StatefulWidget {
+  const DosenHome({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DosenHome> createState() => _DosenHomeState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DosenHomeState extends State<DosenHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
