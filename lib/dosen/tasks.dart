@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'add_task.dart';
-import 'task_card.dart';
-import 'task_model.dart';
+import 'package:mobile_dosen/api/api_service.dart'; // API Service
+import 'package:mobile_dosen/dosen/task_model.dart'; // Task Model
+import 'add_task.dart'; // Add Task Screen
+import 'task_card.dart'; // Task Card Widget
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -11,50 +12,73 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
-  // List to store tasks dynamically
-  List<Task> tasks = [
-    Task(title: 'Layouting Jurnal Dosen Sertifikasi', status: 'Tugas Pekerjaan', color: Color(0xFF4A3AFF)),
-    Task(title: 'Layouting Jurnal Mahasiswa Tingkat Akhir', status: 'Tugas Pekerjaan', color: Color(0xFFFFB800)),
-    Task(title: 'Memasukan Data ke dalam Microsoft', status: 'Selesai', color: Color(0xFF00BA88)),
-  ];
+  final ApiService apiService = ApiService();
+  List<Task> tasks = [];
 
-  // Function to add a new task
-  void addTask(String title) {
-    setState(() {
-      tasks.add(Task(title: title, status: 'Tunggu Pengajuan', color: Color(0xFFFFB800)));
-    });
+  // Memuat data tugas dari API
+  Future<void> loadTasks() async {
+    try {
+      List<Task> fetchedTasks = await apiService.fetchTasks();
+      setState(() {
+        tasks = fetchedTasks;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal memuat tugas: $e')),
+      );
+    }
   }
 
-  // Function to update task status
+  // Menambahkan tugas baru secara lokal
+  void addTask(String title) {
+  setState(() {
+    tasks.add(
+      Task(
+        id: tasks.length + 1, // Tambahkan id unik
+        title: title,
+        status: 'Tunggu Pengajuan',
+        description: 'Tugas baru ditambahkan',
+        color: const Color(0xFFFFB800),
+      ),
+    );
+  });
+}
+
+
+  // Mengubah status tugas
   void updateTaskStatus(int index) {
     setState(() {
       if (tasks[index].status == 'Tunggu Pengajuan') {
-        tasks[index] = tasks[index].copyWith(status: 'Sedang Diproses', color: Color(0xFF4A90E2));
+        tasks[index] = tasks[index].copyWith(
+          status: 'Sedang Diproses',
+          color: const Color(0xFF4A90E2),
+        );
       } else if (tasks[index].status == 'Sedang Diproses') {
-        tasks[index] = tasks[index].copyWith(status: 'Selesai', color: Color(0xFF00BA88));
+        tasks[index] = tasks[index].copyWith(
+          status: 'Selesai',
+          color: const Color(0xFF00BA88),
+        );
       }
     });
   }
 
-  // Show confirmation dialog
+  // Menampilkan dialog konfirmasi perubahan status
   void showConfirmationDialog(int index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Konfirmasi'),
-          content: const Text('Anda yakin ingin merubah status pengerjaan?'),
+          content: const Text('Anda yakin ingin mengubah status pengerjaan?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Batal'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                updateTaskStatus(index); // Update the task status
+                Navigator.of(context).pop(); 
+                updateTaskStatus(index);
               },
               child: const Text(
                 'Ya',
@@ -65,6 +89,12 @@ class _TasksScreenState extends State<TasksScreen> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadTasks(); // Memuat data saat pertama kali
   }
 
   @override
@@ -91,7 +121,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   MaterialPageRoute(builder: (context) => const AddTaskScreen()),
                 );
                 if (newTaskTitle != null && newTaskTitle.isNotEmpty) {
-                  addTask(newTaskTitle);
+                  addTask(newTaskTitle); // Tambah tugas baru
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -116,7 +146,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => showConfirmationDialog(index), // Show confirmation dialog
+                    onTap: () => showConfirmationDialog(index),
                     child: TaskCard(
                       title: tasks[index].title,
                       status: tasks[index].status,

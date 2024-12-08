@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:mobile_dosen/dosen/task_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -90,7 +92,76 @@ Future<int> login(String username, String password) async {
   }
 }
 
+// Future<List<Task>> fetchTasks() async {
+//     try {
+//       final response = await http.get(Uri.parse('$baseUrl/user'));
 
+//       if (response.statusCode == 200) {
+//         List<dynamic> data = json.decode(response.body);
+//         List<Task> tasks = data.map((taskJson) {
+//           return Task(
+//             title: taskJson['username'], // Ganti dengan nama field dari API
+//             status: taskJson['nama'] ?? 'Tunggu Pengajuan', // Default jika status kosong
+//             color: Color(0xFFFFB800), // Ubah sesuai dengan kebutuhan
+//           );
+//         }).toList();
+//         return tasks;
+//       } else {
+//         throw Exception('Gagal mengambil data tugas');
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+// Future<List<Task>> fetchTasks() async {
+//   try {
+//     final response = await http.get(Uri.parse('$baseUrl/user'));
+
+//     if (response.statusCode == 200) {
+//       List<dynamic> data = json.decode(response.body);
+//       List<Task> tasks = data.map((taskJson) {
+//         return Task(
+//           title: taskJson['username'], // Ganti dengan field API yang sesuai
+//           status: taskJson['nama'] ?? 'Tunggu Pengajuan',
+//           description: taskJson['description'] ?? 'Tidak ada deskripsi', // Pastikan field ini ada
+//           color: const Color(0xFFFFB800),
+//         );
+//       }).toList();
+//       return tasks;
+//     } else {
+//       throw Exception('Gagal mengambil data tugas');
+//     }
+//   } catch (e) {
+//     rethrow;
+//   }
+// }
+Future<List<Task>> fetchTasks() async {
+  try {
+    final response = await http.get(Uri.parse('$baseUrl/user'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      List<Task> tasks = data.asMap().entries.map((entry) {
+        int index = entry.key; // Gunakan indeks sebagai ID jika tidak ada ID dari API
+        var taskJson = entry.value;
+
+        return Task(
+          id: taskJson['id'] ?? index, // Ambil ID dari API atau gunakan indeks
+          title: taskJson['username'], // Sesuaikan field API
+          status: taskJson['nama'] ?? 'Tunggu Pengajuan',
+          description: taskJson['description'] ?? 'Tidak ada deskripsi', // Field deskripsi
+          color: const Color(0xFFFFB800),
+        );
+      }).toList();
+      return tasks;
+    } else {
+      throw Exception('Gagal mengambil data tugas');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
 
 //   Future<void> fetchProtectedData() async {
 //   // Mengambil token yang disimpan

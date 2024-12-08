@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'loginPage.dart';
+// import 'loginPage.dart';
 // import 'privacy_policy.dart'; // Impor halaman Kebijakan Privasi
 // import 'help_page.dart'; // Impor halaman Bantuan
 
@@ -77,10 +77,10 @@ class SettingsPage extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => LoginPage()),
-                              (Route<dynamic> route) => false,
-                            );
+                            // Navigator.of(context).pushAndRemoveUntil(
+                            //   MaterialPageRoute(builder: (context) => LoginPage()),
+                            //   (Route<dynamic> route) => false,
+                            // );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,

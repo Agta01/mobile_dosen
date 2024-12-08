@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
-// import 'login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../login.dart';
 import 'profile_update.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  // Fungsi untuk menghapus sesi login dan kembali ke halaman login
+  Future<void> logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Menghapus token atau informasi login lainnya
+    await prefs.remove('userToken'); // Ganti dengan key yang sesuai dengan token yang disimpan
+
+    // Arahkan ke halaman login dan hapus seluruh stack navigasi
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (Route<dynamic> route) => false, // Hapus semua halaman sebelumnya
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +89,7 @@ class SettingsScreen extends StatelessWidget {
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //   MaterialPageRoute(builder: (context) => LoginPage()),
-                            //   (Route<dynamic> route) => false,
-                            // );
-                          },
+                          onPressed: () => logout(context), // Panggil logout saat tombol ditekan
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: EdgeInsets.symmetric(vertical: 16.0),

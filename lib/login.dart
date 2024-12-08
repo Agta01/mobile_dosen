@@ -82,6 +82,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:mobile_dosen/mahasiswa/dashboardPage.dart';
 import 'api/api_service.dart';
 import 'dosen/dosen_home.dart';
 import 'mahasiswa/mahasiswa_home.dart';
@@ -115,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
       } else if (level_id == 2) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MahasiswaHome()),
+          MaterialPageRoute(builder: (context) => DashboardPage()),
         );
       } else if (level_id == 3) {
         Navigator.pushReplacement(
