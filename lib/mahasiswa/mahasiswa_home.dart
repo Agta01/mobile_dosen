@@ -1,54 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'competency_page.dart';
 import 'notification_page.dart';
 import 'settings_page.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class MahasiswaHome extends StatefulWidget {
+  final String periodeTahun;
+  final double jamAlpha;
+  final double jamKompen;
+  final double jamKompenSelesai;
+
+  const MahasiswaHome({
+    Key? key,
+    this.periodeTahun = '',
+    this.jamAlpha = 0.0,
+    this.jamKompen = 0.0,
+    this.jamKompenSelesai = 0.0,
+  }) : super(key: key);
+
   @override
   _MahasiswaHomeState createState() => _MahasiswaHomeState();
 }
 
 class _MahasiswaHomeState extends State<MahasiswaHome> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // Index untuk bottom navigation
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CompetencyPage()),
-        );
-        break;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => NotificationPage()),
-        );
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
-        );
-        break;
-    }
-  }
+  // Daftar halaman untuk IndexedStack, tanpa Dashboard pada index pertama
+  final List<Widget> _pages = [
+    Container(),  // Empty container for Dashboard (we'll manually show dashboard info in the body)
+    CompetencyPage(),
+    NotificationPage(),
+    SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _selectedIndex == 0
+              ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
@@ -59,16 +51,31 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
                         color: Color(0xFFFFD700),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildAttendanceCard('Alpa', '2 jam', Colors.green),
-                        _buildAttendanceCard('Izin', '10 Jam', Colors.blue),
-                        _buildAttendanceCard('Sakit', '1 Jam', Colors.red),
+                        _buildAttendanceCard(
+                          'Periode Tahun',
+                          widget.periodeTahun,
+                          Colors.green,
+                        ),
+                        _buildAttendanceCard(
+                          'Jam Alpa',
+                          '${widget.jamAlpha} Jam',
+                          Colors.blue,
+                        ),
+                        _buildAttendanceCard(
+                          'Jam Kompen',
+                          '${widget.jamKompen} Jam',
+                          Colors.red,
+                        ),
                       ],
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
+                    // Updated Bar Chart for comparing jamKompen vs jamKompenSelesai
+                    const SizedBox(height: 20.0),
+                    // Updated Bar Chart for comparing jamKompen vs jamKompenSelesai
                     Container(
                       height: 250.0,
                       decoration: BoxDecoration(
@@ -77,87 +84,102 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: LineChart(
-                          LineChartData(
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: [
-                                  const FlSpot(0, 8),
-                                  FlSpot(1, 10),
-                                  FlSpot(2, 14),
-                                  FlSpot(3, 15),
-                                  FlSpot(4, 13),
-                                  FlSpot(5, 10),
-                                ],
-                                isCurved: true,
-                                gradient: const LinearGradient(
-                                  colors: [Colors.blue, Colors.lightBlueAccent],
-                                ),
-                                barWidth: 3,
-                                isStrokeCapRound: true,
-                                dotData: FlDotData(show: true),
-                                belowBarData: BarAreaData(
-                                  show: true,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.blue.withOpacity(0.3),
-                                      Colors.lightBlueAccent.withOpacity(0.1)
-                                    ],
+                        child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: 20, // Set this based on your data range
+                            barGroups: [
+                              BarChartGroupData(
+                                x: 0, // Represents "Kompen"
+                                barRods: [
+                                  BarChartRodData(
+                                    toY: widget.jamKompen,
+                                    color: Colors.blue,
+                                    width: 15,
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                ),
+                                ],
+                              ),
+                              BarChartGroupData(
+                                x: 1, // Represents "Kompen Selesai"
+                                barRods: [
+                                  BarChartRodData(
+                                    toY: widget.jamKompenSelesai,
+                                    color: Colors.green,
+                                    width: 15,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ],
                               ),
                             ],
                             titlesData: FlTitlesData(
-                              leftTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: true),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false), // Hide left axis labels
                               ),
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: true,
-                                  getTitlesWidget: (double value, TitleMeta meta) {
+                                  getTitlesWidget:
+                                      (double value, TitleMeta meta) {
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
                                       child: Text(
-                                        _getMonthLabel(value.toInt()),
+                                        value == 0
+                                            ? 'Kompen'
+                                            : 'Kompen Selesai',
                                         style: const TextStyle(
                                           color: Colors.black,
-                                          fontSize: 10,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     );
                                   },
                                 ),
                               ),
-                            ),
-                            borderData: FlBorderData(
-                              show: true,
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1,
+                              topTitles: AxisTitles(
+                                // Hide top axis labels
+                                sideTitles: SideTitles(showTitles: false),
                               ),
                             ),
-                            gridData: FlGridData(show: true),
+                            borderData: FlBorderData(show: true),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10.0),
-                    _buildCourseItem('Algoritma Pemrograman', 'Dosen: Pak Enggar', '10 Jam'),
-                    _buildCourseItem('Pemrograman Mobile', 'Dosen: Pak Aris', '2 Jam'),
-                    _buildCourseItem('Kecerdasan Bisnis', 'Dosen: Pak Haris', '1 Jam'),
+                    const SizedBox(height: 20.0),
                   ],
-                ),
-              ),
-            ],
-          ),
+                )
+              : _pages[_selectedIndex], // Show the corresponding page based on selected index
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Kompetensi'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifikasi'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Pengaturan'),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Color(0xFFFFD700),
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped, // Fungsi untuk menangani klik
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
 
+  // Fungsi untuk menanggapi klik tombol bottom navigation
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index; // Update index yang dipilih
+    });
+  }
+
+  // Widget untuk membuat card attendance
   Widget _buildAttendanceCard(String title, String value, Color color) {
     return Container(
-      padding: EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
@@ -166,7 +188,7 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -174,11 +196,9 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
         children: [
           Text(
             title,
-            style: TextStyle(
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(color: Colors.grey[600]),
           ),
-          SizedBox(height: 5.0),
+          const SizedBox(height: 5.0),
           Text(
             value,
             style: TextStyle(
@@ -190,66 +210,5 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
         ],
       ),
     );
-  }
-
-  Widget _buildCourseItem(String title, String lecturer, String duration) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      padding: EdgeInsets.all(15.0),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                lecturer,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12.0,
-                ),
-              ),
-            ],
-          ),
-          Text(
-            duration,
-            style: TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getMonthLabel(int value) {
-    switch (value) {
-      case 0:
-        return 'Jan';
-      case 1:
-        return 'Feb';
-      case 2:
-        return 'Mar';
-      case 3:
-        return 'Apr';
-      case 4:
-        return 'May';
-      case 5:
-        return 'Jun';
-      default:
-        return '';
-    }
   }
 }

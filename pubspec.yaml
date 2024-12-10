@@ -12,6 +12,7 @@ dependencies:
   http: ^1.2.2
   fl_chart: ^0.69.2
   shared_preferences: ^2.0.15
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

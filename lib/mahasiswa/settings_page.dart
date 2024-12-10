@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'loginPage.dart';
-// import 'privacy_policy.dart'; // Impor halaman Kebijakan Privasi
-// import 'help_page.dart'; // Impor halaman Bantuan
+import 'package:shared_preferences/shared_preferences.dart';
+import '../login.dart'; // Pastikan halaman Login sudah diimport
+import 'privacy_policy.dart'; // Impor halaman Kebijakan Privasi
+import 'help_page.dart'; // Impor halaman Bantuan
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -28,19 +29,19 @@ class SettingsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Akun',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 8.0),
-                    _buildSettingsButton(
-                      'Akun Pribadi',
-                      () {},
-                    ),
+                    // Text(
+                    //   'Akun',
+                    //   style: TextStyle(
+                    //     fontSize: 18.0,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Colors.grey[700],
+                    //   ),
+                    // ),
+                    // SizedBox(height: 8.0),
+                    // _buildSettingsButton(
+                    //   'Akun Pribadi',
+                    //   () {},
+                    // ),
                     SizedBox(height: 24.0),
                     Text(
                       'Lainnya',
@@ -50,26 +51,26 @@ class SettingsPage extends StatelessWidget {
                         color: Colors.grey[700],
                       ),
                     ),
-                    // SizedBox(height: 8.0),
-                    // _buildSettingsButton(
-                    //   'Kebijakan Privasi',
-                    //   () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(builder: (context) => PrivacyPolicyPage()),
-                    //     );
-                    //   },
-                    // ),
-                    // SizedBox(height: 8.0),
-                    // _buildSettingsButton(
-                    //   'Bantuan',
-                    //   () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(builder: (context) => HelpPage()),
-                    //     );
-                    //   },
-                    // ),
+                    SizedBox(height: 8.0),
+                    _buildSettingsButton(
+                      'Kebijakan Privasi',
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => PrivacyPolicyPage()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 8.0),
+                    _buildSettingsButton(
+                      'Bantuan',
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HelpPage()),
+                        );
+                      },
+                    ),
                     Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 32.0),
@@ -77,10 +78,7 @@ class SettingsPage extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //   MaterialPageRoute(builder: (context) => LoginPage()),
-                            //   (Route<dynamic> route) => false,
-                            // );
+                            _logout(context); // Panggil fungsi logout
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -106,18 +104,21 @@ class SettingsPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Kompetensi'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifikasi'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Pengaturan'),
-        ],
-        currentIndex: 3,
-        selectedItemColor: Color(0xFFFFD700),
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-      ),
+    );
+  }
+
+  // Fungsi untuk menghapus session dan mengarahkan ke halaman login
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Menghapus session
+    await prefs.remove('user_id');  // Misalkan 'user_id' adalah session key yang disimpan saat login
+
+    // Mengarahkan pengguna ke halaman login setelah logout
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), // Ganti dengan halaman login Anda
+      (Route<dynamic> route) => false, // Menghapus semua route sebelumnya
     );
   }
 

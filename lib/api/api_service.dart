@@ -5,137 +5,172 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = "http://127.0.0.1:8000/api";
+  static String baseUrl = "http://127.0.0.1:8000/api";
 
-//   Future<String> login(String username, String password) async {
-//   try {
-//     final response = await http.post(
-//       Uri.parse('$baseUrl/api/login'),
-//       body: {'username': username, 'password': password},
-//     );
-
-//     print('Response: ${response.body}'); // Tambahkan untuk melihat respons
-
-//     if (response.statusCode == 201) {
-//       final data = jsonDecode(response.body);
-//       if (data['success']) {
-//         return data['username'];
-//       } else {
-//         throw Exception('Login gagal');
-//       }
-//     } else {
-//       throw Exception('Kesalahan server: ${response.statusCode}');
-//     }
-//   } catch (e) {
-//     print('Error: $e'); // Debug error detail
-//     throw Exception('Terjadi kesalahan: $e');
-//   }
-// }
-
-//  Future<String> login(String username, String password) async {
-//   try {
-//     final response = await http.post(
-//       Uri.parse('$baseUrl/login'),
-//       body: {'username': username, 'password': password},
-//     );
-
-//     print('Response Status Code: ${response.statusCode}');
-//     print('Response Body: ${response.body}');
-
-//     if (response.statusCode == 200) {
-//       final data = jsonDecode(response.body);
-//       if (data['success']) {
-//         // Simpan token di SharedPreferences
-//         SharedPreferences prefs = await SharedPreferences.getInstance();
-//         prefs.setString('token', data['token']); // Simpan token
-//         return data['user']['username']; // Mengembalikan username
-//       } else {
-//         throw Exception('Login gagal');
-//       }
-//     } else {
-//       throw Exception('Kesalahan server: ${response.statusCode}');
-//     }
-//   } catch (e) {
-//     print('Error: $e'); // Debugging error
-//     throw Exception('Terjadi kesalahan: $e');
-//   }
-// }
-
-Future<int> login(String username, String password) async {
+Future<Map<String, dynamic>> login(String username, String password) async {
   try {
     final response = await http.post(
-      Uri.parse('$baseUrl/login'),
+      Uri.parse('$baseUrl/mahasiswa/login'),
       body: {'username': username, 'password': password},
     );
-
-    print('Response Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['success']) {
-        // Simpan token di SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', data['token']); // Simpan token
+        prefs.setString('token', data['token']);
 
-        // Mengembalikan level_id pengguna untuk login
-        return data['user']['level_id']; // Mengembalikan level_id
+        // Check for valid double values before parsing
+        double jamAlpha = double.tryParse(data['user']['jam_alpha'].toString()) ?? 0.0;
+        double jamKompen = double.tryParse(data['user']['jam_kompen'].toString()) ?? 0.0;
+        double jamKompenSelesai = double.tryParse(data['user']['jam_kompen_selesai'].toString()) ?? 0.0;
+
+        return {
+          'id_level': data['user']['id_level'],
+          'periode_tahun': data['user']['periode_tahun'],
+          'jam_alpha': jamAlpha,
+          'jam_kompen': jamKompen,
+          'jam_kompen_selesai': jamKompenSelesai,
+        };
       } else {
-        throw Exception('Login gagal');
+        throw Exception('Login failed');
       }
     } else {
-      throw Exception('Kesalahan server: ${response.statusCode}');
+      throw Exception('Server error: ${response.statusCode}');
     }
   } catch (e) {
-    print('Error: $e'); // Debugging error
-    throw Exception('Terjadi kesalahan: $e');
+    print('Login error: $e');
+    throw Exception('Error: $e');
   }
 }
 
-// Future<List<Task>> fetchTasks() async {
+
+static Future<List<dynamic>> fetchCompetencies() async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/kompen');  // URL API
+
+    try {
+      final response = await http.get(url);  // Melakukan request GET
+      if (response.statusCode == 200) {
+        // Jika berhasil, mengembalikan data yang di-decode
+        final data = json.decode(response.body);
+
+        // Memeriksa apakah data memiliki field 'data' yang berisi array kompetensi
+        if (data is Map<String, dynamic> && data.containsKey('data')) {
+          return data['data'];  // Mengambil list kompetensi dari field 'data'
+        } else {
+          throw Exception('Invalid data format');
+        }
+      } else {
+        throw Exception('Failed to load competencies');
+      }
+    } catch (e) {
+      throw Exception('Error fetching competencies: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchKompenData() async {
+  final url = Uri.parse('$baseUrl/dashboard'); // Ganti dengan URL endpoint API Anda
+
+  try {
+    final response = await http.get(url);  // Melakukan request GET
+    if (response.statusCode == 200) {
+      // Jika berhasil, mengembalikan data yang di-decode
+      final data = json.decode(response.body);
+
+      // Pastikan data yang diterima sesuai dengan yang diharapkan
+      if (data is Map<String, dynamic>) {
+        return {
+          'periode_tahun': data['periode_tahun'],
+          'jam_alpha': data['jam_alpha'],
+          'jam_kompen': data['jam_kompen'],
+          'jam_kompen_selesai': data['jam_kompen_selesai'],
+        };
+      } else {
+        throw Exception('Invalid data format');
+      }
+    } else {
+      throw Exception('Failed to load kompen data');
+    }
+  } catch (e) {
+    throw Exception('Error fetching kompen data: $e');
+  }
+}
+// static Future<Map<String, dynamic>> fetchAttendanceData() async {
 //     try {
-//       final response = await http.get(Uri.parse('$baseUrl/user'));
+//       final response = await http.get(Uri.parse('$baseUrl/kompen'));
 
 //       if (response.statusCode == 200) {
-//         List<dynamic> data = json.decode(response.body);
-//         List<Task> tasks = data.map((taskJson) {
-//           return Task(
-//             title: taskJson['username'], // Ganti dengan nama field dari API
-//             status: taskJson['nama'] ?? 'Tunggu Pengajuan', // Default jika status kosong
-//             color: Color(0xFFFFB800), // Ubah sesuai dengan kebutuhan
-//           );
-//         }).toList();
-//         return tasks;
+//         // Assuming the response body contains a JSON object
+//         return jsonDecode(response.body);
 //       } else {
-//         throw Exception('Gagal mengambil data tugas');
+//         throw Exception('Failed to load attendance data');
 //       }
 //     } catch (e) {
-//       rethrow;
+//       print('Error fetching attendance data: $e');
+//       throw Exception('Error fetching attendance data: $e');
 //     }
 //   }
 
-// Future<List<Task>> fetchTasks() async {
-//   try {
-//     final response = await http.get(Uri.parse('$baseUrl/user'));
+// Future<int> login(String username, String password) async {
+//     try {
+//       final response = await http.post(
+//         Uri.parse('$baseUrl/login/mahasiswa'),
+//         body: {'username': username, 'password': password},
+//       );
 
-//     if (response.statusCode == 200) {
-//       List<dynamic> data = json.decode(response.body);
-//       List<Task> tasks = data.map((taskJson) {
-//         return Task(
-//           title: taskJson['username'], // Ganti dengan field API yang sesuai
-//           status: taskJson['nama'] ?? 'Tunggu Pengajuan',
-//           description: taskJson['description'] ?? 'Tidak ada deskripsi', // Pastikan field ini ada
-//           color: const Color(0xFFFFB800),
-//         );
-//       }).toList();
-//       return tasks;
-//     } else {
-//       throw Exception('Gagal mengambil data tugas');
+//       print('Response Status Code: ${response.statusCode}');
+//       print('Response Body: ${response.body}');
+
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         if (data['success']) {
+//           // Save token in SharedPreferences
+//           SharedPreferences prefs = await SharedPreferences.getInstance();
+//           prefs.setString('token', data['token']); // Save token
+
+//           // Return user level (id_level) after login
+//           return data['user']['id_level'];
+//         } else {
+//           throw Exception('Login failed');
+//         }
+//       } else {
+//         throw Exception('Server error: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       print('Error: $e'); // Debugging error
+//       throw Exception('Error: $e');
 //     }
-//   } catch (e) {
-//     rethrow;
 //   }
-// }
+
+//   // Fetch attendance data
+//   static Future<Map<String, dynamic>> fetchAttendanceData() async {
+//     try {
+//       // Get token from SharedPreferences
+//       SharedPreferences prefs = await SharedPreferences.getInstance();
+//       String? token = prefs.getString('token');
+
+//       if (token == null) {
+//         throw Exception('No token found');
+//       }
+
+//       final response = await http.get(
+//         Uri.parse('$baseUrl/user'),
+//         headers: {
+//           'Authorization': 'Bearer $token', // Add token to Authorization header
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         return jsonDecode(response.body);
+//       } else {
+//         throw Exception('Failed to load attendance data');
+//       }
+//     } catch (e) {
+//       print('Error fetching attendance data: $e');
+//       throw Exception('Error fetching attendance data: $e');
+//     }
+//   }
+  
 Future<List<Task>> fetchTasks() async {
   try {
     final response = await http.get(Uri.parse('$baseUrl/user'));
@@ -163,39 +198,4 @@ Future<List<Task>> fetchTasks() async {
   }
 }
 
-//   Future<void> fetchProtectedData() async {
-//   // Mengambil token yang disimpan
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   String? token = prefs.getString('token'); // Ambil token yang disimpan
-
-//   if (token == null) {
-//     // Token tidak ada, lakukan penanganan kesalahan (misal: redirect ke login)
-//     print('Token tidak ditemukan');
-//     return;
-//   }
-
-//   // Gunakan token untuk permintaan API yang dilindungi
-//   final response = await http.get(
-//     Uri.parse('$baseUrl/api/some-protected-route'),
-//     headers: {'Authorization': 'Bearer $token'},
-//   );
-
-//   if (response.statusCode == 200) {
-//     print('Data berhasil diambil: ${response.body}');
-//   } else {
-//     print('Gagal mengambil data: ${response.statusCode}');
-//   }
-// }
-
-// Future<void> logout() async {
-//   // Menghapus token saat logout
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   prefs.remove('token'); // Menghapus token dari SharedPreferences
-
-//   print('Logout berhasil');
-// }
-
 }
-
-
-
