@@ -38,7 +38,7 @@ class _CompetencyPageState extends State<CompetencyPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Detail Kompetensi'),
+          title: Text('Detail Kompen'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

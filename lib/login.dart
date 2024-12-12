@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      print('Login gagal: Masukkan Password atau Username Yang Benar');
+      print('Login gagal: ');
       // Show SnackBar with a red background color
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

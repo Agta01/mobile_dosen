@@ -29,19 +29,19 @@ class SettingsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Text(
-                    //   'Akun',
-                    //   style: TextStyle(
-                    //     fontSize: 18.0,
-                    //     fontWeight: FontWeight.bold,
-                    //     color: Colors.grey[700],
-                    //   ),
-                    // ),
-                    // SizedBox(height: 8.0),
-                    // _buildSettingsButton(
-                    //   'Akun Pribadi',
-                    //   () {},
-                    // ),
+                    Text(
+                      'Akun',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    SizedBox(height: 8.0),
+                    _buildSettingsButton(
+                      'Akun Pribadi',
+                      () {},
+                    ),
                     SizedBox(height: 24.0),
                     Text(
                       'Lainnya',
