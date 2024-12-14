@@ -19,6 +19,10 @@ Future<Map<String, dynamic>> login(String username, String password) async {
       if (data['success']) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', data['token']);
+        prefs.setString('id_mahasiswa', data['user']['id_mahasiswa'].toString());
+        prefs.setString('username', data['user']['username']);
+        prefs.setString('nama', data['user']['nama']);
+        prefs.setString('periode_tahun', data['user']['periode_tahun'].toString());
 
         // Check for valid double values before parsing
         double jamAlpha = double.tryParse(data['user']['jam_alpha'].toString()) ?? 0.0;
@@ -43,6 +47,7 @@ Future<Map<String, dynamic>> login(String username, String password) async {
     throw Exception('Error: $e');
   }
 }
+
 
 
 static Future<List<dynamic>> fetchCompetencies() async {
@@ -95,81 +100,6 @@ static Future<List<dynamic>> fetchCompetencies() async {
     throw Exception('Error fetching kompen data: $e');
   }
 }
-// static Future<Map<String, dynamic>> fetchAttendanceData() async {
-//     try {
-//       final response = await http.get(Uri.parse('$baseUrl/kompen'));
-
-//       if (response.statusCode == 200) {
-//         // Assuming the response body contains a JSON object
-//         return jsonDecode(response.body);
-//       } else {
-//         throw Exception('Failed to load attendance data');
-//       }
-//     } catch (e) {
-//       print('Error fetching attendance data: $e');
-//       throw Exception('Error fetching attendance data: $e');
-//     }
-//   }
-
-// Future<int> login(String username, String password) async {
-//     try {
-//       final response = await http.post(
-//         Uri.parse('$baseUrl/login/mahasiswa'),
-//         body: {'username': username, 'password': password},
-//       );
-
-//       print('Response Status Code: ${response.statusCode}');
-//       print('Response Body: ${response.body}');
-
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         if (data['success']) {
-//           // Save token in SharedPreferences
-//           SharedPreferences prefs = await SharedPreferences.getInstance();
-//           prefs.setString('token', data['token']); // Save token
-
-//           // Return user level (id_level) after login
-//           return data['user']['id_level'];
-//         } else {
-//           throw Exception('Login failed');
-//         }
-//       } else {
-//         throw Exception('Server error: ${response.statusCode}');
-//       }
-//     } catch (e) {
-//       print('Error: $e'); // Debugging error
-//       throw Exception('Error: $e');
-//     }
-//   }
-
-//   // Fetch attendance data
-//   static Future<Map<String, dynamic>> fetchAttendanceData() async {
-//     try {
-//       // Get token from SharedPreferences
-//       SharedPreferences prefs = await SharedPreferences.getInstance();
-//       String? token = prefs.getString('token');
-
-//       if (token == null) {
-//         throw Exception('No token found');
-//       }
-
-//       final response = await http.get(
-//         Uri.parse('$baseUrl/user'),
-//         headers: {
-//           'Authorization': 'Bearer $token', // Add token to Authorization header
-//         },
-//       );
-
-//       if (response.statusCode == 200) {
-//         return jsonDecode(response.body);
-//       } else {
-//         throw Exception('Failed to load attendance data');
-//       }
-//     } catch (e) {
-//       print('Error fetching attendance data: $e');
-//       throw Exception('Error fetching attendance data: $e');
-//     }
-//   }
   
 Future<List<Task>> fetchTasks() async {
   try {
@@ -197,5 +127,52 @@ Future<List<Task>> fetchTasks() async {
     rethrow;
   }
 }
+
+  // Fungsi untuk mengambil data histori kompen
+  // Future<Map<String, dynamic>> fetchHistoriKompen(String token) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse('$baseUrl/histori_mahasiswa'),
+  //       headers: {'Authorization': 'Bearer $token'},
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       if (data is Map<String, dynamic>) {
+  //         return data; // Mengembalikan seluruh data JSON
+  //       } else {
+  //         throw Exception('Invalid data format');
+  //       }
+  //     } else {
+  //       throw Exception('Failed to load histori kompen');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error fetching histori kompen: $e');
+  //   }
+  // }
+
+Future<List<dynamic>> fetchHistoriKompen(
+      String token, String idMahasiswa) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/histori_mahasiswa/list?id_mahasiswa=$idMahasiswa'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data is List) {
+          return data; // Mengembalikan list histori kompen
+        } else {
+          throw Exception('Format data tidak valid.');
+        }
+      } else {
+        throw Exception(
+            'Gagal memuat histori kompen, kode status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Terjadi kesalahan saat mengambil histori kompen: $e');
+    }
+  }
 
 }

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../login.dart'; // Pastikan halaman Login sudah diimport
 import 'privacy_policy.dart'; // Impor halaman Kebijakan Privasi
 import 'help_page.dart'; // Impor halaman Bantuan
+import 'account_page.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -40,7 +41,14 @@ class SettingsPage extends StatelessWidget {
                     SizedBox(height: 8.0),
                     _buildSettingsButton(
                       'Akun Pribadi',
-                      () {},
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AccountPage()), // Mengarah ke halaman Akun Pribadi
+                        );
+                      },
                     ),
                     SizedBox(height: 24.0),
                     Text(

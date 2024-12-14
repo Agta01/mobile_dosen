@@ -6,41 +6,37 @@ class PrivacyPolicyPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kebijakan Privasi'),
-        backgroundColor: const Color(0xFFFFD700), // Warna gold yang eye-catching
-        elevation: 0, // Menghilangkan bayangan di bawah app bar untuk tampilan yang lebih bersih
+        backgroundColor: const Color(0xFFFFD700), // Eye-catching gold color
+        elevation: 0, // Remove shadow for a cleaner look
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0), // Padding yang lebih proporsional
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0), // Proportional padding
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Agar teks tidak menjorok ke tengah
+            crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
             children: <Widget>[
-              // Heading dengan sedikit space
+              // Heading with space for clarity
               Text(
-                'Kebijakan Privasi',
+                'Kebijakan Privasi Aplikasi Mahasiswa',
                 style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 26.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 16.0), // Memberikan space antara heading dan isi teks
+              SizedBox(height: 16.0), // Space between heading and text
               
-              // Paragraf dengan teks yang lebih mudah dibaca
+              // Paragraph with easy-to-read text
               Text(
-                'Ini adalah halaman Kebijakan Privasi. Anda dapat menyesuaikan teks ini '
-                'dengan kebijakan privasi aplikasi Anda. Pastikan semua informasi yang '
-                'dibutuhkan tercakup dengan baik. Berikut adalah beberapa poin penting yang harus '
-                'diperhatikan dalam kebijakan privasi aplikasi:\n\n'
-                '1. Informasi yang dikumpulkan dari pengguna\n'
-                '2. Bagaimana informasi tersebut digunakan\n'
-                '3. Perlindungan data pengguna\n'
-                '4. Hak-hak pengguna terkait informasi pribadi\n\n'
-                'Kami berkomitmen untuk menjaga privasi pengguna dan memastikan bahwa data yang '
-                'dikumpulkan aman serta digunakan hanya untuk tujuan yang sah.',
+                'Selamat datang di aplikasi kami! Kami sangat menghargai privasi Anda dan berkomitmen untuk melindungi informasi pribadi yang Anda berikan. Berikut adalah kebijakan privasi kami yang menjelaskan cara kami mengumpulkan, menggunakan, dan melindungi data Anda sebagai pengguna aplikasi:\n\n'
+                '1. **Informasi yang dikumpulkan**: Kami mengumpulkan informasi dasar seperti nama, username, dan data akademik untuk menyediakan pengalaman yang lebih baik dalam aplikasi.\n\n'
+                '2. **Bagaimana informasi digunakan**: Data yang kami kumpulkan akan digunakan untuk tujuan akademik dan administratif yang mendukung pembelajaran dan pengelolaan tugas.\n\n'
+                '3. **Keamanan data**: Kami memastikan bahwa data yang dikumpulkan disimpan dengan aman dan hanya dapat diakses oleh pihak yang berwenang sesuai kebijakan universitas.\n\n'
+                '4. **Hak-hak pengguna**: Anda memiliki hak untuk mengakses, memperbarui, atau menghapus informasi pribadi Anda kapan saja melalui pengaturan akun di aplikasi.\n\n'
+                'Kami berkomitmen untuk menjaga privasi dan keamanan data Anda, serta memastikan bahwa aplikasi ini hanya digunakan untuk tujuan yang sah dan bermanfaat bagi pengalaman belajar Anda.',
                 style: TextStyle(
                   fontSize: 16.0,
-                  height: 1.5, // Mengatur jarak antar baris agar teks lebih mudah dibaca
+                  height: 1.5, // Spacing between lines for readability
                   color: Colors.black54,
                 ),
               ),

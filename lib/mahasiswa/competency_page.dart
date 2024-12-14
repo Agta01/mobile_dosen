@@ -20,8 +20,14 @@ class _CompetencyPageState extends State<CompetencyPage> {
   Future<void> fetchCompetencies() async {
     try {
       final fetchedCompetencies = await ApiService.fetchCompetencies();  // Memanggil fungsi dari ApiService
+
+      // Memfilter kompetensi yang statusnya 'setuju'
+      final filteredCompetencies = fetchedCompetencies.where((competency) {
+        return competency['status'] == 'setuju';  // Hanya ambil kompetensi dengan status 'setuju'
+      }).toList();
+
       setState(() {
-        competencies = fetchedCompetencies;  // Menyimpan data kompetensi
+        competencies = filteredCompetencies;  // Menyimpan data kompetensi yang sudah difilter
         isLoading = false;  // Update status loading
       });
     } catch (e) {
@@ -43,7 +49,7 @@ class _CompetencyPageState extends State<CompetencyPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Nomor Kompetensi: ${competency['nomor_kompen']}'),
+              Text('Nomor Kompen: ${competency['nomor_kompen']}'),
               SizedBox(height: 8),
               Text('Nama Pemberi: ${competency['nama']}'),
               SizedBox(height: 8),
@@ -51,7 +57,7 @@ class _CompetencyPageState extends State<CompetencyPage> {
               SizedBox(height: 8),
               Text('Kuota: ${competency['kuota']}'),
               SizedBox(height: 8),
-              Text('Jam Kompetensi: ${competency['jam_kompen']}'),
+              Text('Jam Kompen: ${competency['jam_kompen']}'),
               SizedBox(height: 8),
               Text('Status: ${competency['status']}'),
             ],
@@ -80,7 +86,7 @@ class _CompetencyPageState extends State<CompetencyPage> {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Kompetensi',
+                'Cari Tugas Kompen',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,

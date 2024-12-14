@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'competency_page.dart';
 import 'notification_page.dart';
 import 'settings_page.dart';
+import 'history_notification_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class MahasiswaHome extends StatefulWidget {
@@ -29,7 +30,7 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
   final List<Widget> _pages = [
     Container(),  // Empty container for Dashboard (we'll manually show dashboard info in the body)
     CompetencyPage(),
-    NotificationPage(),
+    HistoryNotificationPage(),
     SettingsPage(),
   ];
 
@@ -95,7 +96,7 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
                                   BarChartRodData(
                                     toY: widget.jamKompen,
                                     color: Colors.blue,
-                                    width: 15,
+                                    width: 20,
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                 ],
@@ -106,7 +107,7 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
                                   BarChartRodData(
                                     toY: widget.jamKompenSelesai,
                                     color: Colors.green,
-                                    width: 15,
+                                    width: 20,
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                 ],
@@ -156,8 +157,8 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Kompetensi'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifikasi'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Kompen'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'History'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Pengaturan'),
         ],
         currentIndex: _selectedIndex,
@@ -212,3 +213,7 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
     );
   }
 }
+
+
+
+
