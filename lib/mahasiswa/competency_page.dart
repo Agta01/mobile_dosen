@@ -51,7 +51,7 @@ class _CompetencyPageState extends State<CompetencyPage> {
             children: [
               Text('Nomor Kompen: ${competency['nomor_kompen']}'),
               SizedBox(height: 8),
-              Text('Nama Pemberi: ${competency['nama']}'),
+              Text('Nama Kompen: ${competency['nama']}'),
               SizedBox(height: 8),
               Text('Deskripsi Kompen: ${competency['deskripsi']}'),
               SizedBox(height: 8),
@@ -125,18 +125,16 @@ class _CompetencyPageState extends State<CompetencyPage> {
                                 competency['deskripsi'],  // Deskripsi kompetensi
                                 style: TextStyle(color: Colors.grey),
                               ),
-                              trailing: ElevatedButton.icon(
-                                onPressed: () {
-                                  showDetailDialog(competency);  // Menampilkan dialog saat tombol diklik
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.yellow[700],  // Warna latar belakang button
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
+                              trailing: IconButton(
+  icon: Icon(
+                                  Icons
+                                      .info_outline, // Menggunakan ikon 'i' dengan outline
+                                  color: Colors
+                                      .yellow[700], // Warna ikon kuning gelap
+                                  size: 28, // Ukuran ikon lebih proporsional
                                 ),
-                                icon: Icon(Icons.info_outline, color: Colors.white),
-                                label: Text('Baca Detail', style: TextStyle(color: Colors.white)),
+                                onPressed: () => showDetailDialog(
+                                    competency), // Memanggil fungsi detail popup
                               ),
                             ),
                           ),

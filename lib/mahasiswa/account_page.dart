@@ -22,7 +22,6 @@ class _AccountPageState extends State<AccountPage> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      idMahasiswa = prefs.getString('id_mahasiswa');
       nomorInduk = prefs.getString('nomor_induk');
       username = prefs.getString('username');
       nama = prefs.getString('nama');
@@ -46,7 +45,6 @@ class _AccountPageState extends State<AccountPage> {
               children: [
                 _buildHeader(),
                 SizedBox(height: 24.0),
-                _buildInfoCard('ID Mahasiswa', idMahasiswa),
                 _buildInfoCard('Nomor Induk', nomorInduk),
                 _buildInfoCard('Username', username),
                 _buildInfoCard('Nama', nama),

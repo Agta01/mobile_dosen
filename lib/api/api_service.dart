@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static String baseUrl = "http://127.0.0.1:8000/api";
+  static String baseUrl = "https://kompenjti.my.id/api";
 
 Future<Map<String, dynamic>> login(String username, String password) async {
   try {
@@ -22,6 +22,7 @@ Future<Map<String, dynamic>> login(String username, String password) async {
         prefs.setString('id_mahasiswa', data['user']['id_mahasiswa'].toString());
         prefs.setString('username', data['user']['username']);
         prefs.setString('nama', data['user']['nama']);
+        prefs.setString('nomor_induk', data['user']['nomor_induk'].toString());
         prefs.setString('periode_tahun', data['user']['periode_tahun'].toString());
 
         // Check for valid double values before parsing
@@ -32,6 +33,7 @@ Future<Map<String, dynamic>> login(String username, String password) async {
         return {
           'id_level': data['user']['id_level'],
           'periode_tahun': data['user']['periode_tahun'],
+          'nomor_induk': data['user']['nomor_induk'],
           'jam_alpha': jamAlpha,
           'jam_kompen': jamKompen,
           'jam_kompen_selesai': jamKompenSelesai,
@@ -49,9 +51,8 @@ Future<Map<String, dynamic>> login(String username, String password) async {
 }
 
 
-
 static Future<List<dynamic>> fetchCompetencies() async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/kompen');  // URL API
+    final url = Uri.parse('https://kompenjti.my.id/api/kompen');  // URL API
 
     try {
       final response = await http.get(url);  // Melakukan request GET
@@ -127,29 +128,6 @@ Future<List<Task>> fetchTasks() async {
     rethrow;
   }
 }
-
-  // Fungsi untuk mengambil data histori kompen
-  // Future<Map<String, dynamic>> fetchHistoriKompen(String token) async {
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse('$baseUrl/histori_mahasiswa'),
-  //       headers: {'Authorization': 'Bearer $token'},
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       if (data is Map<String, dynamic>) {
-  //         return data; // Mengembalikan seluruh data JSON
-  //       } else {
-  //         throw Exception('Invalid data format');
-  //       }
-  //     } else {
-  //       throw Exception('Failed to load histori kompen');
-  //     }
-  //   } catch (e) {
-  //     throw Exception('Error fetching histori kompen: $e');
-  //   }
-  // }
 
 Future<List<dynamic>> fetchHistoriKompen(
       String token, String idMahasiswa) async {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'competency_page.dart';
-import 'notification_page.dart';
+// import 'notification_page.dart';
 import 'settings_page.dart';
 import 'history_notification_page.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -53,6 +53,29 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
+                    // SingleChildScrollView(
+                    // scrollDirection: Axis.horizontal,
+                    // child : Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //   children: [
+                    //     _buildAttendanceCard(
+                    //       'Periode Tahun',
+                    //       widget.periodeTahun,
+                    //       Colors.green,
+                    //     ),
+                    //     _buildAttendanceCard(
+                    //       'Jam Alpa',
+                    //       '${widget.jamAlpha} Jam',
+                    //       Colors.blue,
+                    //     ),
+                    //     _buildAttendanceCard(
+                    //       'Jam Kompen',
+                    //       '${widget.jamKompen} Jam',
+                    //       Colors.red,
+                    //     ),
+                    //   ],
+                    // ),
+                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -73,6 +96,7 @@ class _MahasiswaHomeState extends State<MahasiswaHome> {
                         ),
                       ],
                     ),
+                  
                     const SizedBox(height: 20.0),
                     // Updated Bar Chart for comparing jamKompen vs jamKompenSelesai
                     const SizedBox(height: 20.0),
